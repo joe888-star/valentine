@@ -58,7 +58,7 @@ button {
     background-color: #fff;
     color: #ff6b81;
     border: 2px solid #ff6b81;
-    position: relative;
+    position: absolute;
 }
 
 #message {
@@ -102,7 +102,7 @@ const message = document.getElementById('message');
 const funImage = document.getElementById('funImage');
 const yesSound = document.getElementById('yesSound');
 
-// ✅ Accessible placeholder images (fun sequence)
+// Fun images sequence
 const funImages = [
     'https://i.postimg.cc/3x3Qg5q9/gorilla.png',   // gorilla middle finger
     'https://i.postimg.cc/T1cX5Q7G/person-split.png', // person splitting
@@ -111,20 +111,68 @@ const funImages = [
 
 let clickCount = 0;
 
-// Move No button randomly
+// Function to move No button randomly
 function moveNoButtonSmart() {
     const btnWidth = noBtn.offsetWidth;
     const btnHeight = noBtn.offsetHeight;
     let newX = Math.random() * (window.innerWidth - btnWidth - 20);
     let newY = Math.random() * (window.innerHeight - btnHeight - 20);
-    noBtn.style.position = 'absolute';
     noBtn.style.left = newX + 'px';
     noBtn.style.top = newY + 'px';
 }
 
-// Move button when hovering (desktop)
-noBtn.addEventListener('mouseenter', () => {
-    moveNoButto
+// Detect cursor/finger near No button (tricky prank)
+function checkProximity(e) {
+    let x, y;
+    if(e.type.startsWith('touch')) {
+        const touch = e.touches[0];
+        x = touch.clientX;
+        y = touch.clientY;
+    } else {
+        x = e.clientX;
+        y = e.clientY;
+    }
+
+    const rect = noBtn.getBoundingClientRect();
+    const btnCenterX = rect.left + rect.width/2;
+    const btnCenterY = rect.top + rect.height/2;
+    const distance = Math.hypot(x - btnCenterX, y - btnCenterY);
+
+    if(distance < 100) {
+        moveNoButtonSmart();
+    }
+}
+
+// Add mouse and touch detection
+document.addEventListener('mousemove', checkProximity);
+document.addEventListener('touchmove', checkProximity);
+
+// When No button is actually clicked
+noBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    funImage.src = funImages[clickCount];
+    funImage.style.display = 'block';
+    clickCount = (clickCount + 1) % funImages.length;
+});
+
+// Yes button click
+yesBtn.addEventListener('click', () => {
+    yesSound.play();
+    message.innerHTML = `
+        🌹 Aww, you said YES! 🌹<br><br>
+        Baby, you are the light of my life. Every moment with you
+        feels magical and unforgettable. I promise to always cherish,
+        love, and support you. Will you make me the happiest person 
+        alive and stay mine forever? 💖
+    `;
+    message.style.opacity = 1;
+    yesBtn.style.backgroundColor = '#ff4757';
+    yesBtn.style.transform = 'scale(1.3) rotateX(20deg) rotateY(-15deg)';
+});
+</script>
+</body>
+</html>
+
 
 
 
