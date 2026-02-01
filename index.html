@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Will You Be My Valentine?</title>
+</head>
+<body style="margin:0;height:100vh;display:flex;justify-content:center;align-items:center;background:linear-gradient(120deg,#ffafbd,#ffc3a0);font-family:Verdana,sans-serif">
+
+<div style="background:white;padding:35px;border-radius:25px;text-align:center;width:320px;box-shadow:0 12px 30px rgba(0,0,0,0.25)">
+<h2 style="color:#e60073;font-family:'Comic Sans MS', cursive">Hey Baby, will you be my Valentine? 💖</h2>
+
+<button onclick="yesClick()" style="padding:12px 26px;border:none;border-radius:25px;background:#e60073;color:white;font-size:16px;margin:10px;cursor:pointer;transition:0.2s">
+Yes ❤️
+</button>
+
+<button onclick="noClick()" style="padding:12px 26px;border:none;border-radius:25px;background:#999;color:white;font-size:16px;margin:10px;cursor:pointer;transition:0.2s">
+No 💔
+</button>
+
+<p id="msg" style="margin-top:22px;font-size:18px;color:#e60073;font-weight:bold"></p>
+</div>
+
+<script>
+let words = ["Cheater 😝","Traitor 😏","Loosu 😅","Paithyo 🤪","Erume 🐃","Gundu 😂"];
+let i = 0;
+
+function noClick(){
+  document.getElementById("msg").innerText = words[i];
+  i = (i + 1) % words.length;
+}
+
+function yesClick(){
+  document.getElementById("msg").innerHTML =
+    "Yayyy 🥰 You made me so happy!<br><br>" +
+    "Thank you for saying Yes. I promise love, smiles, hugs, and every moment filled with you ❤️✨";
+}
+</script>
+
+</body>
+</html>
