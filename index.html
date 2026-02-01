@@ -30,9 +30,9 @@ h1 {
 
 .buttons {
     display: flex;
-    gap: 15px;
-    flex-wrap: wrap;
+    gap: 20px;
     justify-content: center;
+    position: relative;
 }
 
 button {
@@ -65,8 +65,7 @@ button:active {
     background-color: #fff;
     color: #ff6b81;
     border: 2px solid #ff6b81;
-    position: absolute;
-    touch-action: none;
+    position: relative;
 }
 
 #message {
@@ -80,43 +79,11 @@ button:active {
     transition: opacity 1s ease-in;
 }
 
-.heart {
-    position: absolute;
-    width: 18px;
-    height: 18px;
-    background: red;
-    transform: rotate(-45deg);
-    animation: float 3s linear infinite;
-}
-
-.heart::before,
-.heart::after {
-    content: "";
-    position: absolute;
-    width: 18px;
-    height: 18px;
-    background: red;
-    border-radius: 50%;
-}
-
-.heart::before {
-    top: -9px;
-    left: 0;
-}
-
-.heart::after {
-    left: 9px;
-    top: 0;
-}
-
-@keyframes float {
-    0% { transform: translateY(0) rotate(-45deg); opacity: 1;}
-    100% { transform: translateY(-500px) rotate(-45deg); opacity: 0;}
-}
-
-@keyframes textFadeIn {
-    0% {opacity: 0; transform: translateY(20px);}
-    100% {opacity: 1; transform: translateY(0);}
+#funImage {
+    margin-top: 30px;
+    max-width: 300px;
+    max-height: 300px;
+    display: none;
 }
 </style>
 </head>
@@ -127,50 +94,57 @@ button:active {
     <button id="yesBtn">Yes ❤️</button>
     <button id="noBtn">No 😢</button>
 </div>
+
+<img id="funImage" src="" alt="Fun Image">
 <div id="message"></div>
 
-<!-- Sound effect -->
 <audio id="yesSound" src="https://www.soundjay.com/button/sounds/button-3.mp3"></audio>
 
 <script>
 const noBtn = document.getElementById('noBtn');
 const yesBtn = document.getElementById('yesBtn');
 const message = document.getElementById('message');
-const body = document.body;
+const funImage = document.getElementById('funImage');
 const yesSound = document.getElementById('yesSound');
 
-// Function to move "No" button away from cursor/finger
-function moveNoButtonSmart(x, y) {
+// Fun images sequence (replace with your own if needed)
+const funImages = [
+    'https://i.imgur.com/kf1C0tL.png', // gorilla middle finger
+    'https://i.imgur.com/9FJGJgF.png', // person splitting
+    'https://i.imgur.com/kf1C0tL.png'  // middle finger again
+];
+
+let clickCount = 0;
+
+// Function to move No button randomly
+function moveNoButtonSmart() {
     const btnWidth = noBtn.offsetWidth;
     const btnHeight = noBtn.offsetHeight;
-    let newX = Math.random() * (window.innerWidth - btnWidth);
-    let newY = Math.random() * (window.innerHeight - btnHeight);
-
-    if(Math.abs(newX - x) < 100) newX += 150;
-    if(Math.abs(newY - y) < 100) newY += 150;
-    if(newX > window.innerWidth - btnWidth) newX = window.innerWidth - btnWidth;
-    if(newY > window.innerHeight - btnHeight) newY = window.innerHeight - btnHeight;
-
+    let newX = Math.random() * (window.innerWidth - btnWidth - 20);
+    let newY = Math.random() * (window.innerHeight - btnHeight - 20);
+    noBtn.style.position = 'absolute';
     noBtn.style.left = newX + 'px';
     noBtn.style.top = newY + 'px';
 }
 
-// Avoid cursor (desktop)
-document.addEventListener('mousemove', (e) => {
-    const rect = noBtn.getBoundingClientRect();
-    const distance = Math.hypot(e.clientX - (rect.left + rect.width/2), e.clientY - (rect.top + rect.height/2));
-    if(distance < 100) moveNoButtonSmart(e.clientX, e.clientY);
-});
+// Function to handle No button click/tap
+function handleNoClick(e) {
+    e.preventDefault();
 
-// Avoid finger (mobile)
-document.addEventListener('touchmove', (e) => {
-    const touch = e.touches[0];
-    const rect = noBtn.getBoundingClientRect();
-    const distance = Math.hypot(touch.clientX - (rect.left + rect.width/2), touch.clientY - (rect.top + rect.height/2));
-    if(distance < 100) moveNoButtonSmart(touch.clientX, touch.clientY);
-});
+    // Move the No button
+    moveNoButtonSmart();
 
-// Yes button clicked
+    // Show next fun image
+    funImage.src = funImages[clickCount];
+    funImage.style.display = 'block';
+    clickCount = (clickCount + 1) % funImages.length;
+}
+
+// Detect mouse and touch interactions for No button
+noBtn.addEventListener('click', handleNoClick);
+noBtn.addEventListener('touchstart', handleNoClick);
+
+// Yes button click
 yesBtn.addEventListener('click', () => {
     yesSound.play();
     message.innerHTML = `
@@ -181,54 +155,12 @@ yesBtn.addEventListener('click', () => {
         alive and stay mine forever? 💖
     `;
     message.style.opacity = 1;
-    message.style.animation = "textFadeIn 1s forwards";
-    noBtn.style.display = 'none';
     yesBtn.style.backgroundColor = '#ff4757';
     yesBtn.style.transform = 'scale(1.3) rotateX(20deg) rotateY(-15deg)';
-    explodeHeartsFromButton(yesBtn, 30);
 });
-
-// Floating hearts continuously in background
-setInterval(() => {
-    createFloatingHeart(Math.random() * window.innerWidth, window.innerHeight + 20);
-}, 300);
-
-// Create floating heart
-function createFloatingHeart(x, y) {
-    const heart = document.createElement('div');
-    heart.classList.add('heart');
-    heart.style.left = x + 'px';
-    heart.style.top = y + 'px';
-    body.appendChild(heart);
-    setTimeout(() => heart.remove(), 5000);
-}
-
-// Hearts explode from Yes button
-function explodeHeartsFromButton(button, count) {
-    const rect = button.getBoundingClientRect();
-    const centerX = rect.left + rect.width/2;
-    const centerY = rect.top + rect.height/2;
-
-    for(let i=0; i<count; i++) {
-        const heart = document.createElement('div');
-        heart.classList.add('heart');
-        heart.style.left = centerX + 'px';
-        heart.style.top = centerY + 'px';
-        body.appendChild(heart);
-
-        const angle = Math.random() * 2 * Math.PI;
-        const distance = 50 + Math.random() * 150;
-
-        heart.animate([
-            { transform: `translate(0,0) rotate(-45deg)`, opacity: 1 },
-            { transform: `translate(${Math.cos(angle)*distance}px, ${Math.sin(angle)*distance}px) rotate(-45deg)`, opacity: 0 }
-        ], { duration: 2000 + Math.random()*1000, easing: 'ease-out' });
-
-        setTimeout(()=>heart.remove(), 3000);
-    }
-}
 </script>
 </body>
 </html>
+
 
 
