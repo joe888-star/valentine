@@ -17,13 +17,15 @@ body {
     font-family: 'Arial', sans-serif;
     overflow: hidden;
     text-align: center;
+    perspective: 1200px;
 }
 
 h1 {
     font-size: 2.5rem;
     color: #fff;
     margin-bottom: 30px;
-    text-shadow: 2px 2px 8px #ff6b81;
+    text-shadow: 3px 3px 15px #ff6b81;
+    transform: rotateY(10deg);
 }
 
 .buttons {
@@ -39,9 +41,14 @@ button {
     border: none;
     border-radius: 12px;
     cursor: pointer;
-    transition: transform 0.3s, box-shadow 0.3s, background 0.3s;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    transition: transform 0.5s, box-shadow 0.5s, background 0.3s;
+    transform-style: preserve-3d;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.3);
     position: relative;
+}
+
+button:active {
+    box-shadow: 0 0 25px #fff, 0 0 50px #ff6b81, 0 0 75px #ff6b81;
 }
 
 #yesBtn {
@@ -50,15 +57,14 @@ button {
 }
 
 #yesBtn:hover {
-    transform: scale(1.2) rotateX(15deg) rotateY(-10deg);
-    box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+    transform: scale(1.3) rotateX(15deg) rotateY(-10deg);
+    box-shadow: 0 15px 35px rgba(0,0,0,0.5);
 }
 
 #noBtn {
     background-color: #fff;
     color: #ff6b81;
     border: 2px solid #ff6b81;
-    position: absolute;
 }
 
 #message {
@@ -67,18 +73,39 @@ button {
     color: #fff;
     max-width: 90%;
     line-height: 1.5;
-    text-shadow: 1px 1px 5px #ff6b81;
+    text-shadow: 2px 2px 8px #ff6b81;
     opacity: 0;
     transition: opacity 0.8s;
 }
 
 #funImage {
     margin-top: 20px;
-    max-width: 250px;
-    max-height: 250px;
+    max-width: 300px;
+    max-height: 300px;
     display: none;
-    border-radius: 12px;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    border-radius: 15px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+    transform-style: preserve-3d;
+    transition: transform 0.6s, opacity 0.5s;
+}
+
+.confetti {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    background-color: red;
+    opacity: 0.8;
+    pointer-events: none;
+    transform: rotate(45deg);
+    border-radius: 2px;
+}
+@keyframes bounceShakeGlow {
+    0% { transform: scale(1) rotate(0deg); box-shadow: 0 10px 25px rgba(0,0,0,0.3); }
+    20% { transform: scale(1.2) rotate(-15deg); box-shadow: 0 0 30px #ff6b81; }
+    40% { transform: scale(1) rotate(10deg); box-shadow: 0 0 35px #ff6b81; }
+    60% { transform: scale(1.15) rotate(-10deg); box-shadow: 0 0 40px #ff6b81; }
+    80% { transform: scale(1) rotate(5deg); box-shadow: 0 0 30px #ff6b81; }
+    100% { transform: scale(1) rotate(0deg); box-shadow: 0 10px 25px rgba(0,0,0,0.3); }
 }
 </style>
 </head>
@@ -104,59 +131,70 @@ const yesSound = document.getElementById('yesSound');
 
 // Fun images sequence
 const funImages = [
-    'https://i.postimg.cc/3x3Qg5q9/gorilla.png',   // gorilla middle finger
-    'https://i.postimg.cc/T1cX5Q7G/person-split.png', // person splitting
-    'https://i.postimg.cc/3x3Qg5q9/gorilla.png'    // middle finger again
+    'https://i.postimg.cc/43vpt2qX/monkey.png',   // monkey middle finger
+    'https://i.postimg.cc/3x3Qg5q9/gorilla.png',  // gorilla middle finger
+    'https://i.postimg.cc/9fRr9r4x/person.png',   // person middle finger
+    'https://i.postimg.cc/6qG5VgDL/girl.png'      // girl middle finger
 ];
 
 let clickCount = 0;
 
-// Function to move No button randomly
-function moveNoButtonSmart() {
-    const btnWidth = noBtn.offsetWidth;
-    const btnHeight = noBtn.offsetHeight;
-    let newX = Math.random() * (window.innerWidth - btnWidth - 20);
-    let newY = Math.random() * (window.innerHeight - btnHeight - 20);
-    noBtn.style.left = newX + 'px';
-    noBtn.style.top = newY + 'px';
+// Show image with 3D pop
+function showFunImage(imgUrl) {
+    funImage.src = imgUrl;
+    funImage.style.display = 'block';
+    funImage.style.opacity = 0;
+    funImage.style.transform = `rotateY(0deg) rotateX(0deg) scale(0.5)`;
+    
+    setTimeout(() => {
+        funImage.style.transition = 'transform 0.6s ease-out, opacity 0.6s ease-out';
+        funImage.style.opacity = 1;
+        funImage.style.transform = `rotateY(${Math.random()*30-15}deg) rotateX(${Math.random()*20-10}deg) scale(1.1)`;
+    }, 50);
+
+    setTimeout(() => {
+        funImage.style.transform = `rotateY(${Math.random()*10-5}deg) rotateX(${Math.random()*5-2}deg) scale(1)`;
+    }, 800);
 }
 
-// Detect cursor/finger near No button (tricky prank)
-function checkProximity(e) {
-    let x, y;
-    if(e.type.startsWith('touch')) {
-        const touch = e.touches[0];
-        x = touch.clientX;
-        y = touch.clientY;
-    } else {
-        x = e.clientX;
-        y = e.clientY;
-    }
+// Animate No button
+function animateNoButton() {
+    noBtn.style.animation = 'bounceShakeGlow 0.8s';
+    setTimeout(() => noBtn.style.animation = '', 800);
+}
 
-    const rect = noBtn.getBoundingClientRect();
-    const btnCenterX = rect.left + rect.width/2;
-    const btnCenterY = rect.top + rect.height/2;
-    const distance = Math.hypot(x - btnCenterX, y - btnCenterY);
+// Confetti effect
+function createConfetti(x, y) {
+    const colors = ['#ff4757','#ff6b81','#ffb6c1','#ffd700','#ffa500'];
+    for(let i=0; i<40; i++){
+        const confetti = document.createElement('div');
+        confetti.classList.add('confetti');
+        confetti.style.backgroundColor = colors[Math.floor(Math.random()*colors.length)];
+        confetti.style.left = x + 'px';
+        confetti.style.top = y + 'px';
+        document.body.appendChild(confetti);
 
-    if(distance < 100) {
-        moveNoButtonSmart();
+        const angle = Math.random()*2*Math.PI;
+        const distance = 100 + Math.random()*200;
+        confetti.animate([
+            { transform: `translate(0,0) rotate(${Math.random()*360}deg)`, opacity:1 },
+            { transform: `translate(${Math.cos(angle)*distance}px, ${Math.sin(angle)*distance}px) rotate(${Math.random()*720}deg)`, opacity:0 }
+        ], { duration: 2000 + Math.random()*1000, easing: 'ease-out' });
+
+        setTimeout(()=>confetti.remove(), 2500);
     }
 }
 
-// Add mouse and touch detection
-document.addEventListener('mousemove', checkProximity);
-document.addEventListener('touchmove', checkProximity);
-
-// When No button is actually clicked
+// No button click
 noBtn.addEventListener('click', (e) => {
     e.preventDefault();
-    funImage.src = funImages[clickCount];
-    funImage.style.display = 'block';
+    showFunImage(funImages[clickCount]);
+    animateNoButton();
     clickCount = (clickCount + 1) % funImages.length;
 });
 
 // Yes button click
-yesBtn.addEventListener('click', () => {
+yesBtn.addEventListener('click', (e) => {
     yesSound.play();
     message.innerHTML = `
         🌹 Aww, you said YES! 🌹<br><br>
@@ -168,10 +206,14 @@ yesBtn.addEventListener('click', () => {
     message.style.opacity = 1;
     yesBtn.style.backgroundColor = '#ff4757';
     yesBtn.style.transform = 'scale(1.3) rotateX(20deg) rotateY(-15deg)';
+
+    const rect = yesBtn.getBoundingClientRect();
+    createConfetti(rect.left + rect.width/2, rect.top + rect.height/2);
 });
 </script>
 </body>
 </html>
+
 
 
 
