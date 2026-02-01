@@ -99,6 +99,8 @@ button:active {
     transform: rotate(45deg);
     border-radius: 2px;
 }
+
+/* Bounce + shake + glow animation for No button */
 @keyframes bounceShakeGlow {
     0% { transform: scale(1) rotate(0deg); box-shadow: 0 10px 25px rgba(0,0,0,0.3); }
     20% { transform: scale(1.2) rotate(-15deg); box-shadow: 0 0 30px #ff6b81; }
@@ -129,17 +131,17 @@ const message = document.getElementById('message');
 const funImage = document.getElementById('funImage');
 const yesSound = document.getElementById('yesSound');
 
-// Fun images sequence
+// ✅ Use your 4 permanent image links here
 const funImages = [
-    'https://i.postimg.cc/43vpt2qX/monkey.png',   // monkey middle finger
-    'https://i.postimg.cc/3x3Qg5q9/gorilla.png',  // gorilla middle finger
-    'https://i.postimg.cc/9fRr9r4x/person.png',   // person middle finger
-    'https://i.postimg.cc/6qG5VgDL/girl.png'      // girl middle finger
+    'https://i.postimg.cc/rscSXmt1/Chat_GPT_Image_Sep_11_2025_05_54_55_PM.png', // Monkey
+    'https://i.postimg.cc/nrZvbzQ7/G3p_BT_PXk_AAy_VDC.jpg',                      // Gorilla
+    'https://i.postimg.cc/Gtrkw2sG/portrait_angry_teen_boy_showing_260nw_1494244898.webp', // Person
+    'https://i.postimg.cc/Bbsx9612/stock_photo_teen_girl_showing_middle_finger_on_a_white_background_120665884.jpg' // Girl
 ];
 
 let clickCount = 0;
 
-// Show image with 3D pop
+// Show image with 3D pop-out
 function showFunImage(imgUrl) {
     funImage.src = imgUrl;
     funImage.style.display = 'block';
@@ -163,7 +165,7 @@ function animateNoButton() {
     setTimeout(() => noBtn.style.animation = '', 800);
 }
 
-// Confetti effect
+// Confetti effect for Yes button
 function createConfetti(x, y) {
     const colors = ['#ff4757','#ff6b81','#ffb6c1','#ffd700','#ffa500'];
     for(let i=0; i<40; i++){
