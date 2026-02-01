@@ -16,16 +16,14 @@ body {
     background: linear-gradient(to right, #ff9a9e, #fad0c4);
     font-family: 'Arial', sans-serif;
     overflow: hidden;
-    perspective: 1000px;
     text-align: center;
 }
 
 h1 {
-    font-size: 2.8rem;
+    font-size: 2.5rem;
     color: #fff;
-    margin-bottom: 40px;
-    text-shadow: 3px 3px 10px #ff6b81;
-    transform: rotateY(10deg);
+    margin-bottom: 30px;
+    text-shadow: 2px 2px 8px #ff6b81;
 }
 
 .buttons {
@@ -42,13 +40,8 @@ button {
     border-radius: 12px;
     cursor: pointer;
     transition: transform 0.3s, box-shadow 0.3s, background 0.3s;
-    transform-style: preserve-3d;
     box-shadow: 0 5px 15px rgba(0,0,0,0.3);
     position: relative;
-}
-
-button:active {
-    box-shadow: 0 0 25px #fff, 0 0 50px #ff6b81, 0 0 75px #ff6b81;
 }
 
 #yesBtn {
@@ -69,21 +62,23 @@ button:active {
 }
 
 #message {
-    margin-top: 40px;
-    font-size: 1.3rem;
+    margin-top: 30px;
+    font-size: 1.2rem;
     color: #fff;
     max-width: 90%;
-    line-height: 1.6;
-    text-shadow: 2px 2px 5px #ff6b81;
+    line-height: 1.5;
+    text-shadow: 1px 1px 5px #ff6b81;
     opacity: 0;
-    transition: opacity 1s ease-in;
+    transition: opacity 0.8s;
 }
 
 #funImage {
-    margin-top: 30px;
-    max-width: 300px;
-    max-height: 300px;
+    margin-top: 20px;
+    max-width: 250px;
+    max-height: 250px;
     display: none;
+    border-radius: 12px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
 }
 </style>
 </head>
@@ -107,16 +102,16 @@ const message = document.getElementById('message');
 const funImage = document.getElementById('funImage');
 const yesSound = document.getElementById('yesSound');
 
-// Fun images sequence (replace with your own if needed)
+// ✅ Accessible placeholder images (fun sequence)
 const funImages = [
-    'https://i.imgur.com/kf1C0tL.png', // gorilla middle finger
-    'https://i.imgur.com/9FJGJgF.png', // person splitting
-    'https://i.imgur.com/kf1C0tL.png'  // middle finger again
+    'https://i.postimg.cc/3x3Qg5q9/gorilla.png',   // gorilla middle finger
+    'https://i.postimg.cc/T1cX5Q7G/person-split.png', // person splitting
+    'https://i.postimg.cc/3x3Qg5q9/gorilla.png'    // middle finger again
 ];
 
 let clickCount = 0;
 
-// Function to move No button randomly
+// Move No button randomly
 function moveNoButtonSmart() {
     const btnWidth = noBtn.offsetWidth;
     const btnHeight = noBtn.offsetHeight;
@@ -127,40 +122,9 @@ function moveNoButtonSmart() {
     noBtn.style.top = newY + 'px';
 }
 
-// Function to handle No button click/tap
-function handleNoClick(e) {
-    e.preventDefault();
-
-    // Move the No button
-    moveNoButtonSmart();
-
-    // Show next fun image
-    funImage.src = funImages[clickCount];
-    funImage.style.display = 'block';
-    clickCount = (clickCount + 1) % funImages.length;
-}
-
-// Detect mouse and touch interactions for No button
-noBtn.addEventListener('click', handleNoClick);
-noBtn.addEventListener('touchstart', handleNoClick);
-
-// Yes button click
-yesBtn.addEventListener('click', () => {
-    yesSound.play();
-    message.innerHTML = `
-        🌹 Aww, you said YES! 🌹<br><br>
-        Baby, you are the light of my life. Every moment with you
-        feels magical and unforgettable. I promise to always cherish,
-        love, and support you. Will you make me the happiest person 
-        alive and stay mine forever? 💖
-    `;
-    message.style.opacity = 1;
-    yesBtn.style.backgroundColor = '#ff4757';
-    yesBtn.style.transform = 'scale(1.3) rotateX(20deg) rotateY(-15deg)';
-});
-</script>
-</body>
-</html>
+// Move button when hovering (desktop)
+noBtn.addEventListener('mouseenter', () => {
+    moveNoButto
 
 
 
